@@ -2,6 +2,7 @@ import React, { useReducer, createContext } from 'react';
 
 const initialState = {
     likes: [],
+    queue: [],
     page: 'likes',
     nextLikesGetEndpoint: ''
 };
@@ -19,9 +20,10 @@ const reducer = (state, action) => {
             };
         }
         case 'LIKES_LOADED': {
+            const newLikes = state.likes.concat(payload);
             return {
                 ...state,
-                likes: payload
+                likes: newLikes
             };
         }
         case 'CHANGE_PAGE': {

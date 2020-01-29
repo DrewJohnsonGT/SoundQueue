@@ -1,3 +1,5 @@
+import { CLIENT_ID, USER_ID } from './constants';
+
 const makeRequest = async endpoint => {
     const preflightResponse = await fetch(endpoint, {
         method: 'OPTIONS'
@@ -13,18 +15,17 @@ const makeRequest = async endpoint => {
 };
 
 const getLikesEndpoint = ({
-    userId,
-    clientId,
+    userId = USER_ID,
+    clientId = CLIENT_ID,
     limit,
     offset,
     nextLikesGetEndpoint
 }) =>
     nextLikesGetEndpoint
-        ? nextLikesGetEndpoint
+        ? `${nextLikesGetEndpoint}?client_id=${clientId}`
         : `https://api-v2.soundcloud.com/users/${userId}/likes?client_id=${clientId}&offset=${offset}&limit=${limit}`;
 
-export const getLikes = ({ userId, clientId, limit, offset }) =>
-    makeRequest(getLikesEndpoint({ userId, clientId, limit, offset }));
+export const getLikes = params => makeRequest(getLikesEndpoint(params));
 
 const LIKE_FILEDS = [
     { id: 'artwork_url', label: 'image' },

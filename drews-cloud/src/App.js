@@ -2,7 +2,6 @@ import React, { useEffect, useContext } from 'react';
 import { Layout, Likes } from './components/index';
 import { Context } from './Context';
 import { getLikes, mapLikeObjects } from './lib/helpers';
-import { CLIENT_ID, USER_ID } from './lib/constants';
 
 const App = () => {
     const {
@@ -12,8 +11,6 @@ const App = () => {
 
     useEffect(() => {
         getLikes({
-            userId: USER_ID,
-            clientId: CLIENT_ID,
             offset: 0,
             limit: 50
         })
