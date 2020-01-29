@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Layout } from './components/index';
+import React, { useEffect, useContext } from 'react';
+import { Layout, Likes } from './components/index';
+import { Context } from './Context';
 import { getLikes, mapLikeObjects } from './lib/helpers';
 import { CLIENT_ID, USER_ID } from './lib/constants';
 
-const Likes = styled.div``;
-const Like = styled.div``;
-
 const App = () => {
-    const [likes, setLikes] = useState([]);
-    const [nextLikesGetEndpoint, setNextGetLikesEndpoint] = useState('');
-    const [page, setPage] = useState('likes');
+    const {
+        state: { likes, nextLikesGetEndpoint, page },
+        dispatch
+    } = useContext(Context);
 
     useEffect(() => {
         getLikes({
@@ -20,24 +18,20 @@ const App = () => {
             limit: 50
         })
             .then(({ next_href, collection }) => {
-                setNextGetLikesEndpoint(next_href);
-                setLikes(mapLikeObjects(collection));
+                dispatch({
+                    type: 'LIKES_LOADED',
+                    payload: mapLikeObjects(collection)
+                });
+                dispatch({
+                    type: 'FIELDS_CHANGED',
+                    payload: { nextLikesGetEndpoint: next_href }
+                });
             })
             .catch(err => console.log(err));
-    }, []);
+    }, [dispatch]);
     console.log('likes', likes);
     console.log('nextLikesGetEndpoint', nextLikesGetEndpoint);
-    return (
-        <Layout>
-            {page === 'likes' && (
-                <Likes>
-                    {likes.map(({ id }) => (
-                        <Like key={id} />
-                    ))}
-                </Likes>
-            )}
-        </Layout>
-    );
+    return <Layout>{page === 'likes' && <Likes likes={likes} />}</Layout>;
 };
 
 export default App;
