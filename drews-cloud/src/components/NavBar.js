@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled, { css } from 'styled-components';
 import { Context } from '../Context';
-import { COLORS } from '../lib/constants';
+import { COLORS, NAV_BAR_HEIGHT } from '../lib/constants';
 
 const NAV_OPTIONS = [
     { id: 'likes', label: 'Likes' },
@@ -11,7 +11,8 @@ const NAV_OPTIONS = [
 const Root = styled.div`
     display: flex;
     position: relative;
-    background-color: ${COLORS.orange};
+    height: ${NAV_BAR_HEIGHT}px;
+    background-color: ${COLORS.lightOrange};
     bottom: 0;
     padding: 0.2rem;
     z-index: 10;
@@ -23,17 +24,28 @@ const Option = styled.div`
     align-items: center;
     justify-content: center;
     color: white;
+    padding: 0.1rem;
     ${({ selected }) =>
         selected &&
         css`
-            background-color: ${COLORS.darkOrange};
+            background-color: ${COLORS.orange};
         `}
 `;
+
+const ItemLength = styled.span`
+    font-size: 14px;
+    color: ${COLORS.offWhite};
+    margin-left: 0.25rem;
+`;
+
+const getItemLength = item => (item.length > 0 ? `(${item.length})` : '');
+
 const NavBar = () => {
     const {
-        state: { page },
+        state: { page, queue, likes },
         dispatch
     } = useContext(Context);
+    const nonQueuedLikes = likes.filter(l => !l.queued);
     return (
         <Root>
             {NAV_OPTIONS.map(({ id, label }) => (
@@ -48,6 +60,9 @@ const NavBar = () => {
                     }
                 >
                     {label}
+                    <ItemLength>
+                        {getItemLength(id === 'queue' ? queue : nonQueuedLikes)}
+                    </ItemLength>
                 </Option>
             ))}
         </Root>

@@ -2,7 +2,9 @@ import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { Context } from '../Context';
 import { getLikes } from '../lib/helpers';
+import { COLORS } from '../lib/constants';
 import NavBar from './NavBar';
+import ControlBar from './ControlBar';
 
 const SCROLL_THRESHOLD = 5;
 
@@ -12,6 +14,7 @@ const Root = styled.div`
     display: flex;
     flex-direction: column;
     position: absolute;
+    background-color: ${COLORS.darkGray};
 `;
 
 const Content = styled.div`
@@ -20,7 +23,7 @@ const Content = styled.div`
 `;
 const Layout = ({ children }) => {
     const {
-        state: { nextLikesGetEndpoint },
+        state: { nextLikesEndpoint, loadingLikes, page },
         dispatch
     } = useContext(Context);
     return (
@@ -29,23 +32,34 @@ const Layout = ({ children }) => {
                 onScroll={({
                     target: { scrollHeight, scrollTop, clientHeight }
                 }) => {
+                    if (loadingLikes || page === 'queue') return;
                     if (
                         scrollHeight -
                             (scrollTop +
                                 scrollTop * (SCROLL_THRESHOLD / 100)) <=
                         clientHeight
                     ) {
-                        getLikes({ nextLikesGetEndpoint }).then(likes =>
-                            dispatch({
-                                type: 'LIKES_LOADED',
-                                payload: likes
-                            })
+                        dispatch({
+                            type: 'LOADING_LIKES'
+                        });
+                        getLikes({ nextLikesEndpoint }).then(
+                            ({ collection, next_href }) => {
+                                dispatch({
+                                    type: 'FIELDS_CHANGED',
+                                    payload: { nextLikesEndpoint: next_href }
+                                });
+                                dispatch({
+                                    type: 'LIKES_LOADED',
+                                    payload: collection
+                                });
+                            }
                         );
                     }
                 }}
             >
                 {children}
             </Content>
+            <ControlBar />
             <NavBar />
         </Root>
     );

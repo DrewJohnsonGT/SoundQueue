@@ -1,10 +1,12 @@
 import React, { useReducer, createContext } from 'react';
-
+import { mapLikeObjects } from './lib/helpers';
 const initialState = {
     likes: [],
     queue: [],
     page: 'likes',
-    nextLikesGetEndpoint: ''
+    nextLikesEndpoint: '',
+    loadingLikes: true,
+    isPlaying: false
 };
 
 const Context = createContext(initialState);
@@ -19,17 +21,63 @@ const reducer = (state, action) => {
                 ...payload
             };
         }
-        case 'LIKES_LOADED': {
-            const newLikes = state.likes.concat(payload);
+        case 'LOADING_LIKES': {
             return {
                 ...state,
-                likes: newLikes
+                loadingLikes: true
+            };
+        }
+        case 'LIKES_LOADED': {
+            const likeObjects = mapLikeObjects(payload);
+            const newLikes = state.likes.concat(likeObjects);
+            return {
+                ...state,
+                likes: newLikes,
+                offset: state.offset + 50,
+                loadingLikes: false
             };
         }
         case 'CHANGE_PAGE': {
             return {
                 ...state,
                 page: payload
+            };
+        }
+        case 'QUEUE_SONG': {
+            const { likes, queue } = state;
+            const newLikes = likes.map(like =>
+                like.id === payload.id ? { ...like, queued: true } : like
+            );
+            queue.push(payload);
+            return {
+                ...state,
+                likes: newLikes,
+                queue
+            };
+        }
+        case 'PLAY': {
+            return {
+                ...state,
+                isPlaying: true
+            };
+        }
+        case 'PAUSE': {
+            return {
+                ...state,
+                isPlaying: false
+            };
+        }
+        case 'NEXT_SONG': {
+            const { queue, likes } = state;
+            const currentSong = queue[0];
+            const newLikes = likes.map(like =>
+                like.id === currentSong.id ? { ...like, queued: false } : like
+            );
+            queue.shift();
+            return {
+                ...state,
+                likes: newLikes,
+                queue
             };
         }
         default:

@@ -1,34 +1,50 @@
 import React, { useEffect, useContext } from 'react';
-import { Layout, Likes } from './components/index';
+import { Layout, Songs } from './components/index';
 import { Context } from './Context';
-import { getLikes, mapLikeObjects } from './lib/helpers';
+import { getLikes } from './lib/helpers';
 
 const App = () => {
     const {
-        state: { likes, nextLikesGetEndpoint, page },
+        state: { likes, page, queue },
         dispatch
     } = useContext(Context);
 
     useEffect(() => {
-        getLikes({
-            offset: 0,
-            limit: 50
-        })
-            .then(({ next_href, collection }) => {
-                dispatch({
-                    type: 'LIKES_LOADED',
-                    payload: mapLikeObjects(collection)
-                });
+        dispatch({
+            type: 'LOADING_LIKES'
+        });
+        getLikes({})
+            .then(({ collection, next_href }) => {
                 dispatch({
                     type: 'FIELDS_CHANGED',
-                    payload: { nextLikesGetEndpoint: next_href }
+                    payload: { nextLikesEndpoint: next_href }
+                });
+                dispatch({
+                    type: 'LIKES_LOADED',
+                    payload: collection
                 });
             })
             .catch(err => console.log(err));
     }, [dispatch]);
     console.log('likes', likes);
-    console.log('nextLikesGetEndpoint', nextLikesGetEndpoint);
-    return <Layout>{page === 'likes' && <Likes likes={likes} />}</Layout>;
+    console.log('queue', queue);
+    return (
+        <Layout>
+            {page === 'likes' && (
+                <Songs
+                    songs={likes.filter(s => !s.queued)}
+                    onSongClick={song =>
+                        !song.queued &&
+                        dispatch({
+                            type: 'QUEUE_SONG',
+                            payload: song
+                        })
+                    }
+                />
+            )}
+            {page === 'queue' && <Songs songs={queue} />}
+        </Layout>
+    );
 };
 
 export default App;
