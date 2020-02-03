@@ -15,6 +15,7 @@ const Root = styled.div`
     flex-direction: column;
     position: absolute;
     background-color: ${COLORS.darkGray};
+    overflow: hidden;
 `;
 
 const Content = styled.div`

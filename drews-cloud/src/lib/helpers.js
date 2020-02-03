@@ -32,7 +32,8 @@ const LIKE_FILEDS = [
     { id: 'duration', label: 'duration' },
     { id: 'id', label: 'id' },
     { id: 'title', label: 'title' },
-    { id: 'user', label: 'user' }
+    { id: 'user', label: 'user' },
+    { id: 'uri', label: 'uri' }
 ];
 export const mapLikeObjects = likes =>
     likes

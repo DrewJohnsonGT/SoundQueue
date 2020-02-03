@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { Layout, Songs } from './components/index';
+import { Layout, Songs, Player } from './components/index';
 import { Context } from './Context';
 import { getLikes } from './lib/helpers';
 
@@ -26,8 +26,6 @@ const App = () => {
             })
             .catch(err => console.log(err));
     }, [dispatch]);
-    console.log('likes', likes);
-    console.log('queue', queue);
     return (
         <Layout>
             {page === 'likes' && (
@@ -43,6 +41,7 @@ const App = () => {
                 />
             )}
             {page === 'queue' && <Songs songs={queue} />}
+            <Player />
         </Layout>
     );
 };

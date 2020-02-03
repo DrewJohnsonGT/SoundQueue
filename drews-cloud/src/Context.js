@@ -6,7 +6,9 @@ const initialState = {
     page: 'likes',
     nextLikesEndpoint: '',
     loadingLikes: true,
-    isPlaying: false
+    isPlaying: false,
+    progress: 0,
+    buffered: 0
 };
 
 const Context = createContext(initialState);
@@ -77,7 +79,15 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 likes: newLikes,
+                progress: 0,
+                buffered: 0,
                 queue
+            };
+        }
+        case 'SONG_PROGRESS': {
+            return {
+                ...state,
+                ...payload
             };
         }
         default:
