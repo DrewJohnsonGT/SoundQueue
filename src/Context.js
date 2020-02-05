@@ -15,7 +15,6 @@ const Context = createContext(initialState);
 
 const reducer = (state, action) => {
     const { type, payload } = action;
-    console.log(type);
     switch (type) {
         case 'FIELDS_CHANGED': {
             return {

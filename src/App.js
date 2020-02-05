@@ -1,7 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { Layout, Songs, Player } from './components/index';
 import { Context } from './Context';
-import { getLikes, authenticateUser } from './lib/helpers';
+import { getLikes } from './lib/helpers';
 
 const App = () => {
     const {
@@ -10,7 +10,6 @@ const App = () => {
     } = useContext(Context);
 
     useEffect(() => {
-        authenticateUser();
         dispatch({
             type: 'LOADING_LIKES'
         });

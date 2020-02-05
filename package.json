@@ -1,5 +1,5 @@
 {
-    "name": "drews-sound",
+    "name": "sound-queue",
     "version": "0.0.1",
     "private": true,
     "dependencies": {
