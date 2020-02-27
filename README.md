@@ -2,6 +2,7 @@
 
 PWA SoundCloud 'clone' to implement some missing SoundCloud features  
 Mainly the ability to queue songs on iOS devices
+(I got tired of not being able to queue on mobile)
 
 Allows for queueing and simple playback of SoundCloud songs
 
